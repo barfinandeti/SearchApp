@@ -1,0 +1,27 @@
+[
+    {
+      "name": "Product A",
+      "warehouseCity": "City1",
+      "quantity": 100,
+      "price": 50
+    },
+    {
+      "name": "Product B",
+      "warehouseCity": "City2",
+      "quantity": 150,
+      "price": 75
+    },
+    {
+      "name": "Product C",
+      "warehouseCity": "City1",
+      "quantity": 120,
+      "price": 60
+    },
+    {
+      "name": "Product D",
+      "warehouseCity": "City3",
+      "quantity": 80,
+      "price": 40
+    }
+  ]
+  

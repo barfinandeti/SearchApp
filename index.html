@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+      <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f4f4f4;
+    }
+
+    div {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: #4caf50;
+      color: #fff;
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+  </head>
+  <body>
+    <div>
+    <!-- Render form fields and buttons -->
+    <label for="productName">Product Name:</label>
+    <input type="text" id="productName" placeholder="Product Name">
+
+    <!-- Repeat similar input fields for other search parameters -->
+    <label for="warehouseCity">Warehouse City:</label>
+    <input type="text" id="warehouseCity" placeholder="Warehouse City">
+
+    <label for="minQuantity">Min Quantity:</label>
+    <input type="number" id="minQuantity" placeholder="Min Quantity">
+
+    <label for="maxQuantity">Max Quantity:</label>
+    <input type="number" id="maxQuantity" placeholder="Max Quantity">
+
+    <label for="minPrice">Min Price:</label>
+    <input type="number" id="minPrice" placeholder="Min Price">
+
+    <label for="maxPrice">Max Price:</label>
+    <input type="number" id="maxPrice" placeholder="Max Price">
+
+    <button onclick="handleSearch()">Search Products</button>
+    <button onclick="handleClearForm()">Clear Form</button>
+  </div> 
+ <script>
+    // State variables for form fields
+    let productName = '';
+    let warehouseCity = '';
+    let minQuantity = '';
+    let maxQuantity = '';
+    let minPrice = '';
+    let maxPrice = '';
+
+    // Function to pre-fill form fields on subsequent visits within the session
+    window.onload = function () {
+      // Retrieve session data for pre-filling form fields
+      const sessionData = sessionStorage.getItem('searchCriteria');
+
+      if (sessionData) {
+        const parsedData = JSON.parse(sessionData);
+
+        // Set form field values based on session data
+        document.getElementById('productName').value = parsedData.productName || '';
+        document.getElementById('warehouseCity').value = parsedData.warehouseCity || '';
+        document.getElementById('minQuantity').value = parsedData.minQuantity || '';
+        document.getElementById('maxQuantity').value = parsedData.maxQuantity || '';
+        document.getElementById('minPrice').value = parsedData.minPrice || '';
+        document.getElementById('maxPrice').value = parsedData.maxPrice || '';
+      }
+    };
+
+    // Function to handle form submission and search from a JSON file
+    function handleSearch() {
+      // Construct search criteria object
+      const searchCriteria = {
+        productName: document.getElementById('productName').value,
+        warehouseCity: document.getElementById('warehouseCity').value,
+        minQuantity: document.getElementById('minQuantity').value,
+        maxQuantity: document.getElementById('maxQuantity').value,
+        minPrice: document.getElementById('minPrice').value,
+        maxPrice: document.getElementById('maxPrice').value,
+      };
+
+      // Save search criteria in session storage
+      sessionStorage.setItem('searchCriteria', JSON.stringify(searchCriteria));
+
+      // Perform the search from the dummy JSON file
+      fetch('dummy_data.json')
+        .then(response => response.json())
+        .then(data => {
+          const searchResult = data.filter(product => {
+            return (
+              product.name.toLowerCase().includes(searchCriteria.productName.toLowerCase()) &&
+              product.warehouseCity.toLowerCase().includes(searchCriteria.warehouseCity.toLowerCase()) &&
+              product.quantity >= parseFloat(searchCriteria.minQuantity || 0) &&
+              product.quantity <= parseFloat(searchCriteria.maxQuantity || Number.MAX_SAFE_INTEGER) &&
+              product.price >= parseFloat(searchCriteria.minPrice || 0) &&
+              product.price <= parseFloat(searchCriteria.maxPrice || Number.MAX_SAFE_INTEGER)
+            );
+          });
+
+          // Log or use the search result as needed
+          console.log(searchResult);
+          sessionStorage.setItem('searchCriteria', JSON.stringify(searchCriteria));
+      sessionStorage.setItem('searchResult', JSON.stringify(searchResult));
+
+      // Navigate to the results page
+      window.location.href = 'results.html?results=' + encodeURIComponent(JSON.stringify(searchResult));
+        })
+        .catch(error => {
+          console.error('Error fetching data:', error);
+        });
+    }
+
+    // Function to handle form clearing
+    function handleClearForm() {
+      // Clear form fields
+      document.getElementById('productName').value = '';
+      document.getElementById('warehouseCity').value = '';
+      document.getElementById('minQuantity').value = '';
+      document.getElementById('maxQuantity').value = '';
+      document.getElementById('minPrice').value = '';
+      document.getElementById('maxPrice').value = '';
+    }
+
+    // Function to handle navigating back to the search page
+    function handleAnotherSearch() {
+      // Implement logic to navigate back to the search page
+      // ...
+    }
+  </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+  </body>
+</html>
